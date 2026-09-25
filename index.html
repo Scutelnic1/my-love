@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050510" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Pentru tine ✦</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+  <div class="touch-ripple-layer" id="touchRipple" aria-hidden="true"></div>
+
+  <header class="header">
+    <a href="#" class="logo" data-scroll="top">Studio iubirii</a>
+    <nav class="nav nav-desktop">
+      <button type="button" class="nav-link" data-scroll="reel">Film</button>
+      <button type="button" class="nav-link" data-scroll="gallery">Amintiri</button>
+      <button type="button" class="nav-link" data-scroll="about">Despre</button>
+      <button type="button" class="nav-link" data-scroll="contact">Mesaj</button>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="theme-pulse" id="pulseBtn" aria-label="Pulsează culorile">
+        <span class="pulse-icon">◈</span>
+      </button>
+      <button type="button" class="menu-toggle" id="menuToggle" aria-label="Meniu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <nav class="mobile-drawer-nav">
+      <button type="button" data-scroll="reel">✦ Film rapid</button>
+      <button type="button" data-scroll="gallery">✦ Amintiri</button>
+      <button type="button" data-scroll="about">✦ Despre noi</button>
+      <button type="button" data-scroll="contact">✦ Mesaj</button>
+    </nav>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Navigare mobilă">
+    <button type="button" class="bottom-nav-btn active" data-scroll="top" aria-label="Acasă">⌂</button>
+    <button type="button" class="bottom-nav-btn" data-scroll="gallery" aria-label="Galerie">▦</button>
+    <button type="button" class="bottom-nav-btn bottom-nav-fab" id="shuffleBtn" aria-label="Surpriză">✧</button>
+    <button type="button" class="bottom-nav-btn" data-scroll="contact" aria-label="Mesaj">♥</button>
+    <button type="button" class="bottom-nav-btn" id="effectsToggle" aria-label="Efecte">◈</button>
+  </nav>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-grid" id="heroGrid" aria-hidden="true"></div>
+      <div class="hero-title-wrap">
+        <p class="hero-eyebrow">din viitor · 3010</p>
+        <h1 class="hero-title" id="heroTitle">Pentru tine</h1>
+        <p class="hero-sub">Fiecare clipă, o constelație</p>
+        <button type="button" class="cta" id="enterBtn">Intră în univers</button>
+        <p class="hero-hint">Glisează · atinge · explorează</p>
+      </div>
+    </section>
+
+    <section class="reel-section" id="reel">
+      <div class="section-head section-head-left">
+        <h2>Film neon</h2>
+        <p>Scroll orizontal — perfect pe telefon</p>
+      </div>
+      <div class="reel-track" id="reelTrack"></div>
+    </section>
+
+    <section class="gallery-section" id="gallery">
+      <div class="section-head">
+        <h2>Amintirile noastre</h2>
+        <p id="galleryStatus">Se încarcă universul…</p>
+      </div>
+
+      <div class="filter-bar" id="filterBar" role="tablist">
+        <button type="button" class="filter-chip is-active" data-filter="all">Toate</button>
+        <button type="button" class="filter-chip" data-filter="image">Poze</button>
+        <button type="button" class="filter-chip" data-filter="video">Video</button>
+        <button type="button" class="filter-chip" data-filter="fav">★ Favorite</button>
+      </div>
+
+      <div class="gallery-orbit" id="galleryOrbit"></div>
+      <div class="gallery-masonry" id="galleryMasonry"></div>
+
+      <div class="load-more-wrap">
+        <button type="button" class="cta cta-outline" id="loadMoreBtn">Mai multe amintiri</button>
+        <span class="load-count" id="loadCount"></span>
+      </div>
+    </section>
+
+    <section class="about glass-panel" id="about">
+      <div class="about-inner">
+        <h2>Despre noi</h2>
+        <p class="about-text" id="aboutText"></p>
+        <div class="stats">
+          <div class="stat-card">
+            <span class="stat-num" id="photoCount">0</span>
+            <span class="stat-label">momente</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num" id="videoCount">0</span>
+            <span class="stat-label">clipuri</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">∞</span>
+            <span class="stat-label">iubire</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-card glass-panel">
+        <h2>Un mesaj</h2>
+        <p id="loveMessage"></p>
+        <div class="heart-field" id="heartField"></div>
+        <button type="button" class="cta cta-small" id="heartBurst">Trimite inimi</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Făcut cu lumină · 3010</span>
+  </footer>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Închide">×</button>
+    <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Anterior">‹</button>
+    <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Următor">›</button>
+    <div class="lightbox-stage" id="lightboxStage">
+      <img src="" alt="" id="lightboxImg" hidden />
+      <video id="lightboxVideo" controls playsinline hidden></video>
+    </div>
+    <p class="lightbox-caption" id="lightboxCaption"></p>
+    <button type="button" class="lightbox-fav" id="lightboxFav" aria-label="Favorite">☆</button>
+  </div>
+
+  <script src="photos.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
