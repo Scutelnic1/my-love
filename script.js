@@ -1,5 +1,19 @@
 (function () {
   const config = window.SITE_CONFIG || { photos: [] };
+  const priorityPhotos = [
+    "images/photo_2026-09-20_09-33-18 (2).jpg",
+    "images/photo_2025-12-15_21-52-23.jpg",
+    "images/photo_2025-12-28_21-01-52.jpg",
+    "images/photo_2026-01-04_22-37-28.jpg",
+    "images/photo_2026-03-08_18-14-03.jpg",
+    "images/photo_2026-03-08_18-14-08 (2).jpg",
+    "images/photo_2026-03-28_19-44-56.jpg",
+    "images/photo_2026-03-28_19-55-49.jpg",
+    "images/photo_2026-03-28_19-55-51.jpg",
+    "images/photo_2026-05-31_22-49-26.jpg",
+    "images/photo_2026-09-19_19-28-39.jpg",
+  ];
+
   function mediaUrl(path) {
     if (!path) return path;
     return path
@@ -37,7 +51,16 @@
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   }
 
-  const allMedia = (config.photos || []).map((item, index) => ({
+  const allMedia = (config.photos || [])
+    .map((item, index) => ({ ...item, originalIndex: index }))
+    .sort((a, b) => {
+      const aPriority = priorityPhotos.indexOf(a.src);
+      const bPriority = priorityPhotos.indexOf(b.src);
+      const aRank = aPriority === -1 ? priorityPhotos.length + a.originalIndex : aPriority;
+      const bRank = bPriority === -1 ? priorityPhotos.length + b.originalIndex : bPriority;
+      return aRank - bRank;
+    })
+    .map((item, index) => ({
     ...item,
     index,
     src: mediaUrl(item.src),
