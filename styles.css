@@ -846,13 +846,18 @@ main {
 }
 
 @media (max-width: 768px) {
+  .theme-pulse {
+    display: none;
+  }
+
   .header {
     padding-inline: 0.75rem;
   }
 
   .logo {
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
+    font-size: clamp(0.55rem, 2.5vw, 0.7rem);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
   }
 
   .hero {

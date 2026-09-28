@@ -10,7 +10,7 @@ const PHOTO_STYLES = [
 window.SITE_CONFIG = {
   heroTitle: "Pentru tine",
   heroSubtitle: "Fiecare clipă, o constelație",
-  siteName: "Studio iubirii",
+  siteName: "Studioul iubirii noastre",
   aboutText:
     "Acest site e o capsulă din viitor, plină cu noi. Fiecare poză e o stea — pe telefon poți glisa, atinge și descoperi tot universul nostru.",
   loveMessage: "Ești preferata mea din toate timeline-urile. Te iubesc.",
