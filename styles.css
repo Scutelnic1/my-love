@@ -1427,21 +1427,28 @@ main {
   overflow: hidden;
 }
 
-.floating-heart {
+.heart-burst {
   position: absolute;
-  font-size: 1.25rem;
+  bottom: 8px;
+  font-size: clamp(1.5rem, 6vw, 2.25rem);
+  line-height: 1;
   pointer-events: none;
-  animation: heart-rise 2.5s var(--ease-out) forwards;
+  filter: drop-shadow(0 0 12px currentColor);
+  animation: heart-rise 3s var(--ease-out) forwards;
 }
 
 @keyframes heart-rise {
   from {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.65) rotate(-8deg);
+  }
+  15%,
+  72% {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
   to {
     opacity: 0;
-    transform: translateY(-100px) scale(1.4);
+    transform: translate3d(var(--drift, 0px), -126px, 0) scale(1.2) rotate(12deg);
   }
 }
 

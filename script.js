@@ -873,12 +873,13 @@
     for (let i = 0; i < n; i++) {
       setTimeout(() => {
         const h = document.createElement("span");
-        h.className = "floating-heart";
+        h.className = "heart-burst";
         h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
         h.style.left = `${15 + Math.random() * 70}%`;
+        h.style.setProperty("--drift", `${(Math.random() - 0.5) * 70}px`);
         h.style.color = `hsl(${280 + Math.random() * 80}, 85%, 68%)`;
         field.appendChild(h);
-        setTimeout(() => h.remove(), 2600);
+        setTimeout(() => h.remove(), 3200);
       }, i * 70);
     }
   }
