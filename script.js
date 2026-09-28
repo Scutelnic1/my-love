@@ -4,8 +4,37 @@
     if (!path) return path;
     return path
       .split("/")
-      .map((part, i) => (i === 0 ? part : encodeURIComponent(part)))
+      .map((part, i) => {
+        if (!part) return part;
+        if (i === 0 && /^[a-zA-Z]:$/i.test(part)) return part;
+        try {
+          return encodeURI(decodeURIComponent(part));
+        } catch {
+          return encodeURI(part);
+        }
+      })
       .join("/");
+  }
+
+  function createPlaceholderSvg(label) {
+    const safeLabel = (label || "love").replace(/</g, "&lt;").replace(/>/g, "&gt;").slice(0, 18);
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#ff6b9d" />
+            <stop offset="50%" stop-color="#7c3aed" />
+            <stop offset="100%" stop-color="#22d3ee" />
+          </linearGradient>
+        </defs>
+        <rect width="800" height="1000" fill="#0b0b18"/>
+        <rect x="40" y="40" width="720" height="920" rx="32" fill="url(#g)" opacity="0.14"/>
+        <circle cx="400" cy="360" r="170" fill="rgba(255,255,255,0.14)"/>
+        <text x="50%" y="58%" text-anchor="middle" font-size="72" fill="#FFFFFF" font-family="Arial, sans-serif" letter-spacing="10">♥</text>
+        <text x="50%" y="74%" text-anchor="middle" font-size="28" fill="#F4F0FF" font-family="Arial, sans-serif" opacity="0.8">${safeLabel}</text>
+      </svg>
+    `;
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   }
 
   const allMedia = (config.photos || []).map((item, index) => ({
@@ -45,6 +74,8 @@
   initFilters();
   initLoadMore();
   initFlyingSprites();
+  initAmbientLove();
+  initGalleryTilt();
   initLightbox();
   initHearts();
   initEnterButton();
@@ -148,7 +179,14 @@
         item._ok = true;
         updateGalleryStatus();
       });
-      img.addEventListener("error", () => markMissing(frame, item));
+      img.addEventListener("error", () => {
+        if (!img.dataset.fallback) {
+          img.src = createPlaceholderSvg(item.alt || "love");
+          img.dataset.fallback = "true";
+        }
+        item._ok = true;
+        updateGalleryStatus();
+      });
       frame.appendChild(img);
     }
 
@@ -219,7 +257,7 @@
   function initReel() {
     const track = document.getElementById("reelTrack");
     if (!track) return;
-    const picks = [...allMedia].slice(0, Math.min(24, allMedia.length));
+    const picks = [...allMedia].slice(0, Math.min(16, allMedia.length));
     picks.forEach((item, i) => {
       const card = document.createElement("article");
       card.className = "reel-card reveal";
@@ -519,6 +557,50 @@
 
   function initRevealObserver() {
     observeReveal(document.querySelectorAll(".reveal"));
+  }
+
+  function initAmbientLove() {
+    const target = document.querySelector(".hero");
+    if (!target || state.effectsReduced) return;
+    let count = 0;
+    const interval = setInterval(() => {
+      if (!document.body.contains(target)) {
+        clearInterval(interval);
+        return;
+      }
+      if (count >= 10) {
+        clearInterval(interval);
+        return;
+      }
+      const heart = document.createElement("span");
+      heart.className = "floating-heart ambient-heart";
+      heart.textContent = ["♥", "✦", "❋", "♡"][Math.floor(Math.random() * 4)];
+      heart.style.left = `${10 + Math.random() * 80}%`;
+      heart.style.top = `${10 + Math.random() * 70}%`;
+      heart.style.animationDuration = `${5 + Math.random() * 6}s`;
+      heart.style.color = ["#ff6b9d", "#7c3aed", "#22d3ee", "#fbbf24"][Math.floor(Math.random() * 4)];
+      target.appendChild(heart);
+      setTimeout(() => heart.remove(), 6500);
+      count += 1;
+    }, 700);
+  }
+
+  function initGalleryTilt() {
+    if (state.isMobile) return;
+    document.querySelectorAll(".photo-frame").forEach((frame) => {
+      frame.addEventListener("pointermove", (event) => {
+        const rect = frame.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width;
+        const y = (event.clientY - rect.top) / rect.height;
+        const rotateY = (x - 0.5) * 12;
+        const rotateX = (0.5 - y) * 12;
+        frame.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+      });
+
+      frame.addEventListener("pointerleave", () => {
+        frame.style.transform = "";
+      });
+    });
   }
 
   function observeReveal(nodes) {
