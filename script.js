@@ -294,50 +294,93 @@
   }
 
   function initGallery() {
-    const orbit = document.getElementById("galleryOrbit");
+    const showcase = document.getElementById("memoryShowcase");
     const masonry = document.getElementById("galleryMasonry");
-    if (!orbit || !masonry) return;
-
-    const core = document.createElement("div");
-    core.className = "orbit-center";
-    orbit.appendChild(core);
+    if (!showcase || !masonry) return;
 
     state.masonry = masonry;
-    state.orbit = orbit;
-    state.orbitBuilt = false;
-
-    renderOrbit();
+    state.showcase = showcase;
+    renderShowcase();
     state.visibleCount = 0;
     appendGalleryBatch(true);
   }
 
-  function renderOrbit() {
-    const orbit = state.orbit;
-    if (!orbit || state.orbitBuilt) return;
-    orbit.querySelectorAll(".orbit-item").forEach((n) => n.remove());
+  function renderShowcase() {
+    const showcase = state.showcase;
+    if (!showcase) return;
+    showcase.replaceChildren();
 
-    const pool = filteredMedia().filter((m) => m.type === "image");
-    const max = state.isMobile ? 5 : 8;
-    const orbitPhotos = pool.slice(0, max);
-    if (!orbitPhotos.length) {
-      orbit.classList.add("orbit-empty");
+    const photos = filteredMedia().filter((item) => item.type === "image");
+    if (!photos.length) {
+      const empty = document.createElement("p");
+      empty.className = "showcase-empty";
+      empty.textContent = state.filter === "fav" ? "Adaugă fotografii la favorite pentru a le vedea aici." : "Nu sunt fotografii de afișat.";
+      showcase.appendChild(empty);
       return;
     }
-    orbit.classList.remove("orbit-empty");
 
-    orbitPhotos.forEach((photo, i) => {
-      const angle = (360 / orbitPhotos.length) * i;
-      const radians = (angle * Math.PI) / 180;
-      const radius = Math.min(250, Math.max(80, window.innerWidth * (state.isMobile ? 0.28 : 0.31)));
-      const wrap = document.createElement("div");
-      wrap.className = "orbit-item";
-      wrap.style.left = `calc(50% + ${Math.cos(radians) * radius}px)`;
-      wrap.style.top = `calc(50% + ${Math.sin(radians) * radius}px)`;
-      wrap.style.setProperty("--delay", `${i * 0.25}s`);
-      wrap.appendChild(createMediaFrame(photo, i));
-      orbit.appendChild(wrap);
-    });
-    state.orbitBuilt = true;
+    let featured = photos.find((item) => item.id === state.showcaseItemId);
+    if (!featured) featured = photos[0];
+    state.showcaseItemId = featured.id;
+
+    const layout = document.createElement("div");
+    layout.className = "showcase-feature";
+
+    const imageWrap = document.createElement("div");
+    imageWrap.className = "showcase-image-wrap";
+    const mainFrame = createMediaFrame(featured, featured.index);
+    mainFrame.classList.add("showcase-main-frame");
+    imageWrap.appendChild(mainFrame);
+
+    const details = document.createElement("div");
+    details.className = "showcase-details";
+    const eyebrow = document.createElement("span");
+    eyebrow.className = "showcase-eyebrow";
+    eyebrow.textContent = "POVESTEA NOASTRĂ";
+    const title = document.createElement("h3");
+    title.textContent = featured.caption || "Împreună, în fiecare amintire";
+    const description = document.createElement("p");
+    description.textContent = "Clipe simple, locuri dragi și povestea noastră, păstrate aici.";
+    const openButton = document.createElement("button");
+    openButton.type = "button";
+    openButton.className = "showcase-open";
+    openButton.textContent = "Deschide fotografia";
+    openButton.addEventListener("click", () => openLightboxAt(featured.index));
+    details.append(eyebrow, title, description, openButton);
+    layout.append(imageWrap, details);
+    showcase.appendChild(layout);
+
+    const thumbnails = photos.filter((item) => item.id !== featured.id).slice(0, 3);
+    if (thumbnails.length) {
+      const rail = document.createElement("div");
+      rail.className = "showcase-thumbnails";
+      thumbnails.forEach((item, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "showcase-thumb";
+        button.setAttribute("aria-label", `Afișează fotografia ${index + 2}`);
+        const image = document.createElement("img");
+        image.src = item.src;
+        image.alt = item.alt || "Fotografie din galeria noastră";
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.addEventListener("error", () => {
+          if (!image.dataset.fallback) {
+            image.src = createPlaceholderSvg(image.alt);
+            image.dataset.fallback = "true";
+          }
+        });
+        const label = document.createElement("span");
+        label.textContent = item.caption || "Amintire împreună";
+        button.append(image, label);
+        button.addEventListener("click", () => {
+          state.showcaseItemId = item.id;
+          renderShowcase();
+        });
+        rail.appendChild(button);
+      });
+      showcase.appendChild(rail);
+    }
   }
 
   function appendGalleryBatch(reset) {
@@ -346,8 +389,7 @@
     if (reset) {
       masonry.innerHTML = "";
       state.visibleCount = 0;
-      state.orbitBuilt = false;
-      renderOrbit();
+      renderShowcase();
     }
 
     const list = filteredMedia();
@@ -394,7 +436,6 @@
         document.querySelectorAll(".filter-chip").forEach((c) => c.classList.remove("is-active"));
         chip.classList.add("is-active");
         state.filter = chip.dataset.filter || "all";
-        state.orbitBuilt = false;
         appendGalleryBatch(true);
       });
     });
