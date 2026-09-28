@@ -94,6 +94,7 @@
   initHeroGrid();
   initReel();
   initGallery();
+  initGalleryScrollStory();
   initFilters();
   initLoadMore();
   initFlyingSprites();
@@ -356,6 +357,7 @@
       const item = document.createElement("div");
       item.className = "masonry-item reveal";
       item.dataset.reveal;
+      item.dataset.galleryIndex = String(globalIndex);
       item.style.setProperty("--delay", `${(i % 6) * 0.06}s`);
       item.style.setProperty("--tx", `${(globalIndex % 2 ? -1 : 1) * 40}px`);
       item.style.setProperty("--ty", `${-15 - (globalIndex % 4) * 10}px`);
@@ -368,6 +370,7 @@
     updateLoadMore();
     updateGalleryStatus();
     observeReveal(masonry.querySelectorAll(".reveal:not(.is-visible)"));
+    state.refreshGalleryScroll?.();
   }
 
   function updateLoadMore() {
@@ -590,6 +593,61 @@
 
   function initRevealObserver() {
     observeReveal(document.querySelectorAll(".reveal"));
+  }
+
+  function initGalleryScrollStory() {
+    const masonry = document.getElementById("galleryMasonry");
+    const current = document.getElementById("galleryScrollCurrent");
+    const total = document.getElementById("galleryScrollTotal");
+    const progress = document.getElementById("galleryScrollProgress");
+    if (!masonry || !current || !total || !progress) return;
+
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rect = masonry.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+
+      const items = [...masonry.querySelectorAll(".masonry-item")];
+      const itemCount = filteredMedia().length;
+      total.textContent = String(itemCount).padStart(2, "0");
+
+      let activeItem = null;
+      let nearestDistance = Infinity;
+      const focalPoint = window.innerHeight * 0.48;
+
+      items.forEach((item) => {
+        const itemRect = item.getBoundingClientRect();
+        const visible = itemRect.bottom > 0 && itemRect.top < window.innerHeight;
+        if (!visible) return;
+
+        const distance = Math.abs((itemRect.top + itemRect.bottom) / 2 - focalPoint);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          activeItem = item;
+        }
+      });
+
+      items.forEach((item) => item.classList.toggle("is-focused", item === activeItem));
+
+      if (!activeItem || !itemCount) {
+        current.textContent = "00";
+        progress.style.transform = "scaleX(0)";
+        return;
+      }
+
+      const position = Number(activeItem.dataset.galleryIndex) + 1;
+      current.textContent = String(position).padStart(2, "0");
+      progress.style.transform = `scaleX(${position / itemCount})`;
+    };
+
+    state.refreshGalleryScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", state.refreshGalleryScroll, { passive: true });
+    window.addEventListener("resize", state.refreshGalleryScroll, { passive: true });
+    state.refreshGalleryScroll();
   }
 
   function initAmbientLove() {
