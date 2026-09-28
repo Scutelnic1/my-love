@@ -1,0 +1,17 @@
+{
+  "name": "Studioul iubirii noastre",
+  "short_name": "Iubirea noastra",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0620",
+  "theme_color": "#0b0620",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "images/photo_2026-09-20_09-33-18%20(2).jpg",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

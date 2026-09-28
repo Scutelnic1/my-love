@@ -33,6 +33,8 @@ photos: [
 
 Dublu-click pe `index.html` sau urcă folderul pe [Netlify Drop](https://app.netlify.com/drop) pentru link pe telefon.
 
+Pe iPhone, deschide linkul publicat în Safari, apasă **Partajare** și alege **Adaugă la ecranul principal**. Deschiderea din iconița salvată folosește modul standalone, fără bara browserului peste site.
+
 ## Stiluri poză
 
 `neon`, `hologram`, `polaroid`, `glitch`, `prism`, `vintage`, `chrome`, `aurora`, `cyber` — se rotesc automat la auto-slots.
