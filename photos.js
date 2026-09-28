@@ -1,5 +1,5 @@
 ﻿/**
- * Lista media generată din folderul images/ (73 fișiere: 71 poze + 2 video)
+ * Lista fotografiilor din folderul images/ (71 fișiere)
  * useAutoSlots: false — folosește toate fișierele reale
  */
 
@@ -87,8 +87,6 @@ window.SITE_CONFIG = {
   { id: "p69", type: "image", src: "images/photo_2026-09-19_19-28-40.jpg", alt: "Amintire 69", style: "vintage" },
   { id: "p70", type: "image", src: "images/photo_2026-09-20_09-33-18 (2).jpg", alt: "Amintire 70", style: "chrome" },
   { id: "p71", type: "image", src: "images/photo_2026-09-20_09-33-18.jpg", alt: "Amintire 71", style: "aurora" },
-  { id: "v72", type: "video", src: "images/video_2026-09-25_16-23-45 (2).mp4", alt: "Amintire 72", style: "hologram", caption: "▶ video" },
-  { id: "v73", type: "video", src: "images/video_2026-09-25_16-23-45.mp4", alt: "Amintire 73", style: "hologram", caption: "▶ video" },
   ],
   galleryBatchSize: 12,
   galleryBatchSizeDesktop: 18,

@@ -303,9 +303,12 @@
 
     orbitPhotos.forEach((photo, i) => {
       const angle = (360 / orbitPhotos.length) * i;
+      const radians = (angle * Math.PI) / 180;
+      const radius = Math.min(250, Math.max(80, window.innerWidth * (state.isMobile ? 0.28 : 0.31)));
       const wrap = document.createElement("div");
       wrap.className = "orbit-item";
-      wrap.style.setProperty("--angle", `${angle}deg`);
+      wrap.style.left = `calc(50% + ${Math.cos(radians) * radius}px)`;
+      wrap.style.top = `calc(50% + ${Math.sin(radians) * radius}px)`;
       wrap.style.setProperty("--delay", `${i * 0.25}s`);
       wrap.appendChild(createMediaFrame(photo, i));
       orbit.appendChild(wrap);
@@ -376,6 +379,13 @@
     else state.favorites.add(id);
     localStorage.setItem("love-favs", JSON.stringify([...state.favorites]));
     syncLightboxFav();
+  }
+
+  function syncLightboxFav() {
+    const item = allMedia[state.lightboxIndex];
+    const button = document.getElementById("lightboxFav");
+    if (!button || !item) return;
+    button.textContent = state.favorites.has(item.id) ? "★" : "☆";
   }
 
   function initScrollProgress() {
@@ -671,12 +681,6 @@
       }
       if (cap) cap.textContent = item.caption || item.alt || "";
       syncLightboxFav();
-    }
-
-    function syncLightboxFav() {
-      const item = allMedia[state.lightboxIndex];
-      if (!fav || !item) return;
-      fav.textContent = state.favorites.has(item.id) ? "★" : "☆";
     }
 
     function shut() {
